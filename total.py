@@ -7,6 +7,7 @@ RED = '\033[91m'
 RESET = '\033[0m'
 
 def shift_k_bit(k, matrix, right=1):
+    # right = 1 là dịch sang phải 3 vị trí
     arr = matrix_to_array(matrix)
     if right: 
         newarr = arr[-k:] + arr[:-k]
@@ -16,6 +17,7 @@ def shift_k_bit(k, matrix, right=1):
     return new_matrix
 
 def shift_k_columns(k, matrix, right=1):
+    # right = 1 là dịch sang phải k cột
     num_rows = len(matrix)
     num_cols = len(matrix[0])
 
@@ -56,8 +58,10 @@ def zigzag(matrix):
             else:
                 r += 1
                 c -= 1
-    return output
+    return output # Chuỗi zigzag
+
 def undomix_matrix(matrix_A, matrix_B):
+    # Xếp lại ma trận đã nhúng giống vị trí ma trận ban đầu
     row = len(matrix_A)
     col = len(matrix_A[0])
     arr = [0]*row*col
@@ -66,8 +70,31 @@ def undomix_matrix(matrix_A, matrix_B):
             arr[matrix_A[i][j]-1] = matrix_B[i][j]
     newmatrix = array_to_matrix(arr,row,col)
     return newmatrix
-
+def sequence_hide_and_seek(matrix,m : str,row,col):
+    arr = matrix_to_array(matrix_to_array)
+    k = (row-1)*len(matrix[0]) + col - 1
+    l = []
+    x = 0
+    for i in range(len(arr)):
+        if i < k:
+            continue
+        if x == len(m):
+            break
+        if arr[i] % 2 != m[x]:
+            if arr[i]%2 == 0:
+                if m[x] == 1:
+                    arr[i] += 1
+                    l.append(i+1)
+            else:
+                if m[x] == 0:
+                    arr[i] -= 1
+                    l.append(i+1)
+    newmatrix = array_to_matrix(arr,len(matrix),len(matrix[0]))
+    print_embbed_matrix_img(newmatrix,l)
+        
+    
 def random_hide_and_seek(matrix ,m : str,a : int,p=37):
+    # Giấu và tìm kiếm ngẫu nhiên
     print("Ma tran ban dau")
     print_matrix(matrix)
     arr = []
@@ -101,6 +128,7 @@ def random_hide_and_seek(matrix ,m : str,a : int,p=37):
     print_embbed_matrix_img(embbed_img_matrix,arr[:len(m)])
 
 class Wulee():
+    # Thuật toán Wu-lee
     def __init__(self,matrixK=matrixK,matrixF=matrixF) :
         self.K = matrixK
         self.F = matrixF
@@ -108,6 +136,7 @@ class Wulee():
         self.small_matrices = self.split_matrix(matrixF)
         
     def  split_matrix(self,matrix, num_rows_small=len(matrixK), num_cols_small=len(matrixK[0])):
+        # chia thành nhiều ma trận nhỏ cùng kích thước với khóa K
         num_rows_big = len(matrix)
         num_cols_big = len(matrix[0])
         
@@ -123,6 +152,7 @@ class Wulee():
         
         return small_matrices
     
+    # Giấu tin VD: B="011"
     def hide(self,B : str):
         x = 0
         Fs = self.small_matrices
