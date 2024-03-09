@@ -7,7 +7,7 @@ RED = '\033[91m'
 RESET = '\033[0m'
 
 def shift_k_bit(k, matrix, right=1):
-    # right = 1 là dịch sang phải 3 vị trí
+    # right = 1 là dịch sang phải k vị trí
     arr = matrix_to_array(matrix)
     if right: 
         newarr = arr[-k:] + arr[:-k]
