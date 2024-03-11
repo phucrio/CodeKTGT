@@ -6,90 +6,123 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 RESET = '\033[0m'
 
-def shift_k_bit(k, matrix, right=1):
-    # right = 1 là dịch sang phải k vị trí
+class Outguess:
+    def __init__(self,matrix):
+        self.DC = matrix[0][0]
+        pass
+    def shift_k_bit(self, k, matrix, right=1):
+        # right = 1 là dịch sang phải k vị trí
+        arr = matrix_to_array(matrix)
+        if right: 
+            newarr = arr[-k:] + arr[:-k]
+        else:
+            newarr = arr[k:] + arr[:k]
+        new_matrix = array_to_matrix(newarr,len(matrix),len(matrix[0]))
+        return new_matrix
+
+    def shift_k_columns(self, k, matrix, right=1):
+        # right = 1 là dịch sang phải k cột
+        num_rows = len(matrix)
+        num_cols = len(matrix[0])
+
+        new_matrix = [[0] * num_cols for _ in range(num_rows)]
+
+        for i in range(num_rows):
+            for j in range(num_cols):
+                if right:
+                    new_col = (j + k) % num_cols
+                else:
+                    new_col = (j - k) % num_cols
+                new_matrix[i][new_col] = matrix[i][j]
+
+        return new_matrix
+
+    def zigzag(self, matrix):
+        rows, cols = len(matrix),len(matrix[0])
+        output = []
+        r, c = 0, 0
+        for _ in range(rows * cols):
+            output.append(matrix[r, c])
+            if (r + c) % 2 == 0:  # Di chuyển lên trên
+                if c == cols - 1:
+                    r += 1
+                elif r == 0:
+                    c += 1
+                else:
+                    r -= 1
+                    c += 1
+            else:  # Di chuyển xuống dưới
+                if r == rows - 1:
+                    c += 1
+                elif c == 0:
+                    r += 1
+                else:
+                    r += 1
+                    c -= 1
+        return output # Chuỗi zigzag
+
+    def undomix_matrix(self, matrix_A, matrix_B):
+        # Xếp lại ma trận đã nhúng giống vị trí ma trận ban đầu
+        row = len(matrix_A)
+        col = len(matrix_A[0])
+        arr = [0]*row*col
+        for i in range(row):
+            for j in range(col): 
+                arr[matrix_A[i][j]-1] = matrix_B[i][j]
+        newmatrix = array_to_matrix(arr,row,col)
+        return newmatrix
+    
+    def hide(self,matrix,m):
+        print("Ma trận ban đầu:")
+        print_matrix(matrix)
+        arr = matrix_to_array(matrix)
+        idx = 0
+        l = []
+        for i in range(len(m)):
+            while arr[idx] == self.DC or arr[idx] == 0 or arr[idx] == 1:
+                idx += 1        
+            if arr[idx] % 2 == 0:
+                if int(m[i]) == 1 and arr[idx] > 0:
+                    arr[idx] += 1
+                else:  
+                    arr[idx] -= 1
+                l.append(idx+1)
+                idx += 1    
+            elif arr[idx] % 2 == 1 :
+                if int(m[i]) == 0 and arr[idx] > 0:
+                    arr[idx] -= 1
+                else: 
+                    arr[idx] += 1
+                l.append(idx+1)
+                idx += 1
+        newmatrix = array_to_matrix(arr,len(matrix),len(matrix[0]))
+        print(f"\nMa trận sau nhúng m = {m}")
+        print_embbed_matrix_img(newmatrix,l)
+
+def sequence_hide_and_seek(matrix,m : str,row=1,col=1):
+    #Giấu và tìm kiếm tuần tự
+    print("Ma Trận ban đầu:")
+    print_matrix(matrix)
     arr = matrix_to_array(matrix)
-    if right: 
-        newarr = arr[-k:] + arr[:-k]
-    else:
-        newarr = arr[k:] + arr[:k]
-    new_matrix = array_to_matrix(newarr,len(matrix),len(matrix[0]))
-    return new_matrix
-
-def shift_k_columns(k, matrix, right=1):
-    # right = 1 là dịch sang phải k cột
-    num_rows = len(matrix)
-    num_cols = len(matrix[0])
-
-    new_matrix = [[0] * num_cols for _ in range(num_rows)]
-
-    for i in range(num_rows):
-        for j in range(num_cols):
-            if right:
-                new_col = (j + k) % num_cols
-            else:
-                new_col = (j - k) % num_cols
-            new_matrix[i][new_col] = matrix[i][j]
-
-    return new_matrix
-
-
-
-
-def zigzag(matrix):
-    rows, cols = len(matrix),len(matrix[0])
-    output = []
-    r, c = 0, 0
-    for _ in range(rows * cols):
-        output.append(matrix[r, c])
-        if (r + c) % 2 == 0:  # Di chuyển lên trên
-            if c == cols - 1:
-                r += 1
-            elif r == 0:
-                c += 1
-            else:
-                r -= 1
-                c += 1
-        else:  # Di chuyển xuống dưới
-            if r == rows - 1:
-                c += 1
-            elif c == 0:
-                r += 1
-            else:
-                r += 1
-                c -= 1
-    return output # Chuỗi zigzag
-
-def undomix_matrix(matrix_A, matrix_B):
-    # Xếp lại ma trận đã nhúng giống vị trí ma trận ban đầu
-    row = len(matrix_A)
-    col = len(matrix_A[0])
-    arr = [0]*row*col
-    for i in range(row):
-        for j in range(col): 
-            arr[matrix_A[i][j]-1] = matrix_B[i][j]
-    newmatrix = array_to_matrix(arr,row,col)
-    return newmatrix
-def sequence_hide_and_seek(matrix,m : str,row,col):
-    arr = matrix_to_array(matrix_to_array)
     k = (row-1)*len(matrix[0]) + col - 1
+    print(k)
     l = []
-    x = 0
-    for i in range(len(arr)):
-        if i < k:
-            continue
-        if x == len(m):
-            break
-        if arr[i] % 2 != m[x]:
-            if arr[i]%2 == 0:
-                if m[x] == 1:
-                    arr[i] += 1
-                    l.append(i+1)
+    for i in range(len(m)):
+        if arr[k+i] % 2 != int(m[i]):
+            if arr[k+i]%2 == 0:
+                if int(m[i]) == 1 and arr[k+i] > 0:
+                    arr[k+i] += 1
+                else: 
+                    arr[k+i] -= 1
             else:
-                if m[x] == 0:
-                    arr[i] -= 1
-                    l.append(i+1)
+                if int(m[i]) == 0 and arr[k+i] > 0:
+                    arr[k+i] -= 1
+                else:
+                    arr[k+i] += 1
+        l.append(k+i+1)
+    print(l)
     newmatrix = array_to_matrix(arr,len(matrix),len(matrix[0]))
+    print(f"\nMa trận sau khi nhúng m={m} bắt đầu từ vị trí hàng, cột ({row},{col}):")
     print_embbed_matrix_img(newmatrix,l)
         
     
@@ -208,6 +241,38 @@ class Wulee():
                             break
                 
         
+class Jsteg():
+    def __init__(self) -> None:
+        pass
+    
+    def hide(self,matrix,m):
+        print("Ma trận ban đầu:")
+        print_matrix(matrix)
+        DC = matrix[0][0]
+        arr = matrix_to_array(matrix)
+        idx = 0
+        l = []
+        for i in range(len(m)):
+            while arr[idx] == DC or arr[idx] == 0 or arr[idx] == 1:
+                idx += 1        
+            if arr[idx] % 2 == 0:
+                if int(m[i]) == 1 and arr[idx] > 0:
+                    arr[idx] += 1
+                else:  
+                    arr[idx] -= 1
+                l.append(idx+1)
+                idx += 1    
+            elif arr[idx] % 2 == 1 :
+                if int(m[i]) == 0 and arr[idx] > 0:
+                    arr[idx] -= 1
+                else: 
+                    arr[idx] += 1
+                l.append(idx+1)
+                idx += 1
+        newmatrix = array_to_matrix(arr,len(matrix),len(matrix[0]))
+        print(f"\nMa trận sau nhúng m = {m}")
+        print_embbed_matrix_img(newmatrix,l)
+             
                 
 # Example usage:
 # matrix = np.array([
