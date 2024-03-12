@@ -26,10 +26,23 @@ def test_jsteg():
     jteg = Jsteg()
     jteg.hide(matrix,m)
 
-og = Outguess(matrixJsteg)   
-matrix = matrixJsteg
-arr = og.zigzag(matrix)
-mt1 = array_to_matrix(arr,len(matrix),len(matrix[0]))
-mt2 = og.shift_k_bit(3,mt1)
-m="01101011"
-og.hide(mt2,m)
+def test_outguess():
+    og = Outguess(matrixJsteg)   
+    matrix = matrixJsteg
+    arr = og.zigzag(matrix)
+    mt1 = array_to_matrix(arr,len(matrix),len(matrix[0]))
+    print("Ma trận sau khi zigzag:")
+    print_matrix(mt1)
+    mt2 = og.shift_k_bit(3,mt1)
+    m="01101011"
+    og.hide(mt2,m)
+ 
+def test_og():
+    og = Outguess(matrixJsteg)   
+    m="01101011"
+    og.run(m,k=3,shiftcol=1)  
+# test_outguess() 
+# test_random_hide_and_seek()
+#test_sequence_hide_and_seek()
+#test_jsteg()
+test_wulee()
